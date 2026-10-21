@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#681d32">
+<title>SLIVORA 467 — Class Photobooth</title>
+<style>
+:root{--wine:#681d32;--berry:#923a54;--cream:#fff7ec;--pink:#f3d6d5;--gold:#e2bd75;--ink:#321721;--paper:#fffdf8}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font-family:Arial,Helvetica,sans-serif;background-color:var(--cream);background-image:radial-gradient(#d9b7a4 1px,transparent 1px);background-size:17px 17px}
+button,select,input{font:inherit}
+button{border:0;cursor:pointer;font-weight:800;border-radius:13px;padding:12px 15px;transition:transform .15s,opacity .15s}
+button:active{transform:scale(.98)}button:disabled{opacity:.4;cursor:not-allowed}
+header{position:relative;overflow:hidden;text-align:center;padding:29px 17px 26px;color:var(--cream);background:linear-gradient(145deg,#a64b62,#681d32 65%,#431222);border-bottom:5px double var(--gold)}
+header:before,header:after{content:"✦";position:absolute;color:var(--gold);font-size:34px;opacity:.9}
+header:before{left:8%;top:18px;transform:rotate(-14deg)}header:after{right:8%;bottom:19px;transform:rotate(14deg)}
+.kicker{font-size:10px;letter-spacing:4px;font-weight:800;color:#f6d8d1}
+h1{font-family:Georgia,serif;font-size:clamp(35px,10vw,58px);letter-spacing:2px;margin:10px 0 3px;text-shadow:2px 3px 0 #41101f}
+.subtitle{margin:7px auto 0;max-width:440px;font-family:Georgia,serif;font-style:italic;color:#ffe9df;line-height:1.5}
+.sticker{display:inline-block;margin-top:15px;padding:7px 12px;border:1px solid var(--gold);border-radius:4px;transform:rotate(-2deg);font-size:10px;letter-spacing:2px;font-weight:bold}
+main{width:min(980px,100%);margin:auto;padding:16px 13px 35px}
+.intro{text-align:center;font-family:Georgia,serif;margin:8px 0 18px;font-size:14px}
+.grid{display:grid;grid-template-columns:1fr;gap:15px}
+.panel{background:var(--paper);border:2px solid var(--wine);border-radius:17px;padding:15px;box-shadow:5px 5px 0 var(--pink);min-width:0}
+.panel h2{font-family:Georgia,serif;margin:0 0 12px;color:var(--wine);font-size:21px}
+.panel h2 span{font-family:Arial,sans-serif;font-size:11px;letter-spacing:1px;vertical-align:middle;color:var(--berry)}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.primary{background:var(--wine);color:white}.secondary{background:var(--pink);color:var(--wine)}.gold{background:var(--gold);color:#3b1b20}.outline{background:transparent;border:1.5px solid var(--wine);color:var(--wine)}
+.cameraBox{position:relative;background:#25151b;border:5px solid var(--wine);border-radius:12px;overflow:hidden;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center}
+.cameraBox video,.cameraBox canvas{display:block;width:100%;height:100%;object-fit:cover}
+.cameraBox canvas{display:none}
+.placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#ffe8dd;padding:18px;background:radial-gradient(circle at 30% 25%,#8f4658,#29141e 75%)}
+.cameraIcon{font-size:42px;margin-bottom:8px}.placeholder strong{font-family:Georgia,serif;font-size:19px}.placeholder small{margin-top:7px;line-height:1.5;color:#f4d5d4}
+.rowline{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0;font-size:12px;font-weight:bold}
+select,input{max-width:100%;border:1.5px solid #d7b8b5;border-radius:10px;background:#fffaf5;color:var(--ink);padding:10px}
+.rowline select{width:58%}
+.status{min-height:19px;color:#7b3549;font-size:12px;line-height:1.5;margin:9px 1px}
+.thumbs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+.thumb{position:relative;border:2px solid var(--gold);background:#f8e6df;border-radius:8px;padding:4px;min-width:0}
+.thumb img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;border-radius:4px}
+.thumb small{display:block;font-size:10px;text-align:center;padding:4px 0}
+.thumb .mini{width:100%;padding:6px 2px;margin-top:3px;font-size:10px;border-radius:6px;background:var(--wine);color:white}
+.thumb.selected{outline:3px solid var(--berry);outline-offset:1px}
+.resultWrap{background:#ead4ca;border:2px dashed var(--berry);border-radius:12px;padding:10px;display:flex;justify-content:center;overflow:auto}
+#resultCanvas{width:min(100%,350px);height:auto;display:block;box-shadow:0 4px 14px #6b334433}
+.tip{font-size:12px;line-height:1.55;color:#754452;margin:10px 0 0}
+footer{text-align:center;padding:22px 15px 28px;color:#754452;font-size:11px;letter-spacing:1px}
+@media(min-width:760px){main{padding:22px 18px 40px}.grid{grid-template-columns:1fr 1fr;align-items:start}.panel{padding:18px}.intro{font-size:16px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="kicker">OUR LITTLE CLASS ARCHIVE</div>
+  <h1>SLIVORA 467</h1>
+  <p class="subtitle">little moments, forever memories ♡</p>
+  <div class="sticker">SMADA 467 • CLASS PHOTOBOOTH</div>
+</header>
+<main>
+  <p class="intro">Satu klik, satu kenangan. Kumpulkan foto teman-temanmu dan bawa pulang memorinya ✦</p>
+  <div class="grid">
+    <section class="panel">
+      <h2>01 / Photo studio <span>✦ SNAP!</span></h2>
+      <div class="cameraBox">
+        <video id="video" autoplay playsinline muted></video>
+        <canvas id="photoCanvas"></canvas>
+        <div class="placeholder" id="placeholder">
+          <div class="cameraIcon">📸</div>
+          <strong>Your class moment starts here</strong>
+          <small>Tekan “Nyalakan kamera” dan izinkan akses kamera di browser.</small>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="primary" id="startBtn">Nyalakan kamera</button>
+        <button class="secondary" id="stopBtn" disabled>Tutup kamera</button>
+        <button class="gold" id="captureBtn" disabled>✦ Ambil foto</button>
+        <button class="outline" id="resetBtn">Ulang sesi</button>
+      </div>
+      <div class="rowline"><label for="layoutSelect">Jumlah foto kolase</label>
+        <select id="layoutSelect"><option value="3">3 foto</option><option value="4" selected>4 foto</option></select>
+      </div>
+      <div class="rowline"><label for="filterSelect">Nuansa foto</label>
+        <select id="filterSelect"><option value="normal">Natural</option><option value="retro">Retro film</option><option value="mono">Black & white</option><option value="soft">Soft glow</option></select>
+      </div>
+      <div class="status" id="cameraStatus" aria-live="polite">Kamera belum dinyalakan. Kamera memerlukan izin dan situs HTTPS.</div>
+      <div class="rowline"><strong id="countStatus">Foto tersimpan: 0 / 4</strong><button class="secondary" id="retakeBtn" disabled>Hapus foto terakhir</button></div>
+      <div class="thumbs" id="thumbs"></div>
+      <p class="tip">Tips: ketuk <b>Ambil foto</b> sekali untuk satu foto. Di setiap thumbnail ada tombol untuk mengambil ulang atau menghapus foto tertentu.</p>
+    </section>
+    <section class="panel">
+      <h2>02 / Memory strip <span>♡ KEEP IT</span></h2>
+      <div class="rowline"><label for="caption">Tulisan di bawah kolase</label></div>
+      <input id="caption" type="text" maxlength="42" value="CLASS OF 2026 • FRIENDS FOREVER" style="width:100%" aria-label="Tulisan di bawah kolase">
+      <div class="resultWrap" style="margin-top:12px"><canvas id="resultCanvas" width="600" height="1000"></canvas></div>
+      <div class="controls">
+        <button class="primary" id="downloadBtn" disabled>⬇ Download foto</button>
+        <button class="gold" id="shareBtn" disabled>↗ Share hasil</button>
+        <button class="secondary" id="emailBtn" disabled>✉ Kirim via email</button>
+        <button class="outline" id="clearBtn">Bersihkan foto</button>
+      </div>
+      <div class="status" id="resultStatus" aria-live="polite">Hasil kolase akan muncul di sini setelah kamu mengambil foto.</div>
+      <p class="tip">Download menyimpan kolase sebagai PNG. Share membuka menu berbagi HP jika didukung. Email akan membuka aplikasi email dengan subjek siap pakai; lampirkan file PNG yang sudah diunduh.</p>
+    </section>
+  </div>
+</main>
+<footer>MADE WITH ♡ BY SLIVORA 467 · CLASS MEMORIES, ALWAYS</footer>
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const video=$('video'), photoCanvas=$('photoCanvas'), photoCtx=photoCanvas.getContext('2d');
+const resultCanvas=$('resultCanvas'), resultCtx=resultCanvas.getContext('2d');
+const placeholder=$('placeholder');
+let stream=null, photos=[], selectedIndex=-1;
+const palette={wine:'#681d32',berry:'#923a54',cream:'#fff7ec',pink:'#f3d6d5',gold:'#e2bd75',ink:'#321721'};
+function say(msg){$('cameraStatus').textContent=msg}
+function limit(){return Number($('layoutSelect').value)}
+function currentFilter(){return $('filterSelect').value}
+function stopStream(){
+ if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}
+ video.srcObject=null;
+}
+async function startCamera(){
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){say('Browser tidak mendukung kamera. Buka website melalui link GitHub Pages HTTPS di Chrome.');return}
+ try{
+  stopStream();
+  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});
+  video.srcObject=stream; await video.play();
+  video.style.display='block';photoCanvas.style.display='none';placeholder.style.display='none';
+  $('captureBtn').disabled=false;$('stopBtn').disabled=false;
+  say('Kamera aktif! Tekan Ambil foto sekali untuk mengambil satu foto.');
+ }catch(err){say('Kamera belum bisa dibuka. Izinkan akses kamera di Chrome, lalu coba lagi. ('+(err.name||'error')+')')}
+}
+function stopCamera(){
+ stopStream();video.style.display='none';$('stopBtn').disabled=true;$('captureBtn').disabled=true;
+ if(selectedIndex>=0&&photos[selectedIndex])showPhoto(photos[selectedIndex]);else{photoCanvas.style.display='none';placeholder.style.display='flex'}
+ say('Kamera ditutup. Foto yang sudah diambil tetap ada sampai halaman ditutup atau sesi dibersihkan.');
+}
+function drawFiltered(source, targetCtx, w, h, filter){
+ targetCtx.drawImage(source,0,0,w,h);
+ if(filter==='normal')return;
+ const img=targetCtx.getImageData(0,0,w,h),d=img.data;
+ for(let i=0;i<d.length;i+=4){
+  let r=d[i],g=d[i+1],b=d[i+2];
+  if(filter==='mono'){let v=.299*r+.587*g+.114*b;d[i]=d[i+1]=d[i+2]=v}
+  else if(filter==='retro'){d[i]=Math.min(255,r*1.08+10);d[i+1]=Math.min(255,g*1.01+3);d[i+2]=Math.max(0,b*.82-4)}
+  else if(filter==='soft'){d[i]=Math.min(255,r*1.04+8);d[i+1]=Math.min(255,g*1.02+6);d[i+2]=Math.min(255,b*1.02+7)}
+ }
+ targetCtx.putImageData(img,0,0);
+ if(filter==='retro'){targetCtx.fillStyle='rgba(179,112,63,.09)';targetCtx.fillRect(0,0,w,h)}
+ if(filter==='soft'){targetCtx.fillStyle='rgba(255,222,212,.08)';targetCtx.fillRect(0,0,w,h)}
+}
+function capture(){
+ if(!stream||!video.videoWidth){say('Nyalakan kamera dulu sebelum mengambil foto.');return}
+ const w=video.videoWidth,h=video.videoHeight;
+ const c=document.createElement('canvas');c.width=w;c.height=h;
+ const ctx=c.getContext('2d');
+ ctx.save();ctx.translate(w,0);ctx.scale(-1,1);
+ drawFiltered(video,ctx,w,h,currentFilter());ctx.restore();
+ const data=c.toDataURL('image/jpeg',.92);
+ if(selectedIndex>=0&&selectedIndex<photos.length){photos[selectedIndex]=data;say('Foto nomor '+(selectedIndex+1)+' berhasil diambil ulang!')}
+ else{
+  if(photos.length>=limit()){say('Slot foto sudah penuh. Pilih tombol Ambil ulang atau Hapus di thumbnail.');return}
+  photos.push(data);selectedIndex=photos.length-1;say('Foto '+photos.length+' berhasil diambil!');
+ }
+ updateUI();
+}
+function showPhoto(src){
+ const im=new Image();im.onload=()=>{photoCanvas.width=im.width;photoCanvas.height=im.height;photoCtx.drawImage(im,0,0);photoCanvas.style.display='block';placeholder.style.display='none';video.style.display='none'};
+ im.src=src;
+}
+function selectPhoto(i){
+ if(i<0||i>=photos.length)return;
+ selectedIndex=i;showPhoto(photos[i]);$('captureBtn').textContent='↻ Ambil ulang #'+(i+1);
+ say('Foto nomor '+(i+1)+' dipilih. Tekan “Ambil ulang #'+(i+1)+'” untuk menggantinya, atau gunakan Hapus di thumbnail.');
+ renderThumbs();
+}
+function deletePhoto(i){
+ if(i<0||i>=photos.length)return;
+ photos.splice(i,1);
+ if(!photos.length)selectedIndex=-1;
+ else if(selectedIndex===i)selectedIndex=Math.min(i,photos.length-1);
+ else if(selectedIndex>i)selectedIndex--;
+ updateUI();
+ if(selectedIndex>=0)showPhoto(photos[selectedIndex]);
+ else if(!stream){photoCanvas.style.display='none';placeholder.style.display='flex'}
+ say('Foto dihapus. Kamu bisa mengambil foto baru.');
+}
+function renderThumbs(){
+ const wrap=$('thumbs');wrap.replaceChildren();
+ photos.forEach((src,i)=>{
+  const box=document.createElement('div');box.className='thumb'+(i===selectedIndex?' selected':'');
+  const img=document.createElement('img');img.src=src;img.alt='Foto '+(i+1);
+  const label=document.createElement('small');label.textContent='FOTO '+(i+1);
+  const pick=document.createElement('button');pick.className='mini';pick.textContent='Ambil ulang';pick.type='button';pick.addEventListener('click',()=>selectPhoto(i));
+  const del=document.createElement('button');del.className='mini';del.style.background='#e8c4b7';del.style.color=palette.ink;del.textContent='Hapus';del.type='button';del.addEventListener('click',()=>deletePhoto(i));
+  box.append(img,label,pick,del);wrap.append(box);
+ });
+}
+function cover(ctx,img,x,y,w,h){
+ const iw=img.naturalWidth||img.width,ih=img.naturalHeight||img.height,scale=Math.max(w/iw,h/ih),cw=w/scale,ch=h/scale;
+ ctx.drawImage(img,(iw-cw)/2,(ih-ch)/2,cw,ch,x,y,w,h);
+}
+function renderResult(){
+ const n=limit(),W=600,pad=30,gap=15,headerH=150,footH=105,photoH= n===3?360:280;
+ const H=pad*2+headerH+n*photoH+(n-1)*gap+footH;
+ resultCanvas.width=W;resultCanvas.height=H;
+ const ctx=resultCtx;
+ ctx.fillStyle=palette.wine;ctx.fillRect(0,0,W,H);
+ ctx.strokeStyle=palette.gold;ctx.lineWidth=4;ctx.strokeRect(13,13,W-26,H-26);
+ ctx.strokeStyle='#b76a7c';ctx.lineWidth=1;ctx.strokeRect(22,22,W-44,H-44);
+ ctx.fillStyle=palette.gold;ctx.font='26px Georgia';ctx.textAlign='center';ctx.fillText('✦  OUR CLASS MEMORIES  ✦',W/2,50);
+ ctx.fillStyle=palette.cream;ctx.font='bold 39px Georgia';ctx.fillText('SLIVORA 467',W/2,94);
+ ctx.fillStyle=palette.pink;ctx.font='17px Arial';ctx.fillText('SMADA 467  •  CLASS PHOTOBOOTH',W/2,126);
+ for(let i=0;i<n;i++){
+  const y=pad+headerH+i*(photoH+gap),x=pad,ww=W-pad*2;
+  ctx.fillStyle=palette.gold;ctx.fillRect(x-3,y-3,ww+6,photoH+6);
+  ctx.fillStyle=palette.cream;ctx.fillRect(x,y,ww,photoH);
+  if(photos[i]){
+   const im=new Image();im.onload=()=>{ctx.save();ctx.beginPath();ctx.rect(x+5,y+5,ww-10,photoH-10);ctx.clip();cover(ctx,im,x+5,y+5,ww-10,photoH-10);ctx.restore();drawDecor(ctx,x,y,ww,photoH,i)};
+   im.src=photos[i];
+  }else{
+   ctx.fillStyle='#efd6d2';ctx.fillRect(x+5,y+5,ww-10,photoH-10);
+   ctx.fillStyle=palette.berry;ctx.font='24px Georgia';ctx.fillText('YOUR MEMORY '+(i+1),W/2,y+photoH/2);
+   ctx.font='20px Arial';ctx.fillText('✦',x+30,y+34);ctx.fillText('♡',x+ww-30,y+photoH-18);
+  }
+ }
+ ctx.fillStyle=palette.cream;ctx.font='bold 17px Arial';
+ const cap=$('caption').value.trim()||'CLASS OF 2026 • FRIENDS FOREVER';
+ ctx.fillText(cap.slice(0,42),W/2,H-61);
+ ctx.fillStyle=palette.gold;ctx.font='14px Georgia';ctx.fillText('✦ FRIENDS TODAY, MEMORIES FOREVER ✦',W/2,H-33);
+ const has=photos.length>0;
+ $('downloadBtn').disabled=!has;$('shareBtn').disabled=!has;$('emailBtn').disabled=!has;
+}
+function drawDecor(ctx,x,y,w,h,i){
+ ctx.save();ctx.strokeStyle=palette.wine;ctx.lineWidth=2;ctx.strokeRect(x+5,y+5,w-10,h-10);
+ ctx.fillStyle=palette.cream;ctx.font='bold 17px Arial';ctx.textAlign='left';ctx.fillText('✦',x+13,y+27);
+ ctx.textAlign='right';ctx.fillText('467',x+w-13,y+h-12);
+ ctx.restore();
+}
+function updateUI(){
+ $('countStatus').textContent='Foto tersimpan: '+photos.length+' / '+limit();
+ $('retakeBtn').disabled=photos.length===0;
+ $('captureBtn').textContent=selectedIndex>=0&&selectedIndex<photos.length?'↻ Ambil ulang #'+(selectedIndex+1):'✦ Ambil foto';
+ renderThumbs();renderResult();
+}
+function download(){
+ if(!photos.length)return;
+ resultCanvas.toBlob(blob=>{
+  if(!blob){$('resultStatus').textContent='Belum berhasil membuat PNG. Coba lagi.';return}
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='SLIVORA-467-Class-Photobooth.png';
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+  $('resultStatus').textContent='Download dimulai. Cek folder Download di HP kamu.';
+ },'image/png');
+}
+async function share(){
+ if(!photos.length)return;
+ resultCanvas.toBlob(async blob=>{
+  if(!blob)return;
+  const file=new File([blob],'SLIVORA-467-Class-Photobooth.png',{type:'image/png'});
+  try{
+   if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:'SLIVORA 467 Class Photobooth',text:'Our class memories ♡'});
+   else{download();$('resultStatus').textContent='Berbagi file langsung tidak didukung browser ini. PNG diunduh agar bisa kamu kirim manual.'}
+  }catch(e){if(e.name!=='AbortError')$('resultStatus').textContent='Share tidak tersedia. Coba Download dulu.'}
+ },'image/png');
+}
+function email(){download();const subject=encodeURIComponent('SLIVORA 467 — Class Photobooth');const body=encodeURIComponent('Hai! Ini kenangan photobooth kelas SLIVORA 467 ♡\\nLampirkan file PNG hasil download sebelum mengirim email.');location.href='mailto:?subject='+subject+'&body='+body}
+function clearPhotos(){
+ photos=[];selectedIndex=-1;photoCanvas.style.display='none';
+ if(!stream)placeholder.style.display='flex';
+ $('resultStatus').textContent='Foto dibersihkan. Ambil foto baru untuk membuat kolase.';
+ updateUI();
+}
+$('startBtn').addEventListener('click',startCamera);
+$('stopBtn').addEventListener('click',stopCamera);
+$('captureBtn').addEventListener('click',capture);
+$('retakeBtn').addEventListener('click',()=>deletePhoto(photos.length-1));
+$('resetBtn').addEventListener('click',()=>{clearPhotos();say('Sesi baru dimulai. Kamera tetap aktif jika sebelumnya sudah dinyalakan.')});
+$('clearBtn').addEventListener('click',clearPhotos);
+$('downloadBtn').addEventListener('click',download);
+$('shareBtn').addEventListener('click',share);
+$('emailBtn').addEventListener('click',email);
+$('caption').addEventListener('input',renderResult);
+$('filterSelect').addEventListener('change',()=>{
+ if(selectedIndex>=0&&photos[selectedIndex]&&stream){
+  say('Nuansa filter baru berlaku untuk foto berikutnya. Ambil ulang foto yang dipilih untuk menerapkannya.');
+ }else say('Filter dipilih. Nuansa akan digunakan pada foto berikutnya.');
+});
+$('layoutSelect').addEventListener('change',()=>{
+ if(photos.length>limit())photos=photos.slice(0,limit());
+ if(selectedIndex>=photos.length)selectedIndex=photos.length-1;
+ updateUI();say('Kolase diubah menjadi '+limit()+' foto.');
+});
+window.addEventListener('pagehide',stopStream);
+renderResult();updateUI();
+})();
+</script>
+</body>
+</html>
