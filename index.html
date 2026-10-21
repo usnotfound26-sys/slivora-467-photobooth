@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#641b2b">
+<title>SLIVORA 467 — Class Photobooth</title>
+<style>
+:root{--wine:#641b2b;--wine2:#8d3046;--cream:#fff7ef;--ink:#25181b;--muted:#78676a;--line:#ead8d9;--pink:#f3dfe2}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+header{padding:24px 18px 20px;background:linear-gradient(135deg,#541524,#812d42);color:white;border-radius:0 0 28px 28px}
+.kicker{font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.8}.brand{font-size:clamp(29px,8vw,44px);line-height:1;margin:9px 0;font-weight:850;letter-spacing:-.055em}.brand span{color:#f5d9d9}.sub{font-size:13px;opacity:.88;max-width:430px;line-height:1.5}
+main{max-width:760px;margin:0 auto;padding:16px;display:grid;gap:14px}.panel{background:white;border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 6px 24px #5415240a}.section-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.section-head h2{font-size:16px;margin:0}.small{font-size:12px;color:var(--muted);line-height:1.5}.pill{font-size:11px;background:var(--pink);color:var(--wine);border-radius:99px;padding:6px 9px;font-weight:700}
+.camera-wrap{background:#1b1517;border-radius:16px;overflow:hidden;position:relative;aspect-ratio:4/3;display:grid;place-items:center;color:white}.camera-wrap video{width:100%;height:100%;object-fit:cover;display:none}.camera-wrap .placeholder{padding:25px;text-align:center}.camera-wrap .placeholder b{display:block;font-size:17px;margin-bottom:6px}.camera-wrap video.mirror{transform:scaleX(-1)}.camera-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
+button,.btn{font:inherit;border:0;border-radius:12px;padding:11px 14px;cursor:pointer;font-size:13px;font-weight:750;transition:transform .12s,opacity .12s}button:active{transform:scale(.98)}button:disabled{opacity:.4;cursor:not-allowed}.primary{background:var(--wine);color:white}.secondary{background:#f5e9eb;color:var(--wine)}.outline{background:white;border:1px solid var(--line);color:var(--wine)}.danger{background:#fff0f0;color:#9b2834}.wide{flex:1}
+.row{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.count{font-size:13px;color:var(--muted);font-weight:700}.shots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.shot{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fffafa;min-width:0}.shot .thumb{aspect-ratio:4/3;background:#f2e5e6;display:grid;place-items:center;position:relative}.shot img{width:100%;height:100%;object-fit:cover}.shot .empty{font-size:12px;color:#987d83;text-align:center;padding:10px}.shot .shot-foot{padding:8px;display:flex;align-items:center;justify-content:space-between;gap:5px}.shot .shot-foot span{font-size:12px;font-weight:750}.shot .shot-foot button{padding:7px 8px;font-size:11px}
+label{display:block;font-size:12px;font-weight:750;margin:0 0 6px;color:#5d454a}select,input[type=email]{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;background:white;color:var(--ink);font:inherit;font-size:14px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:11px}.field.full{grid-column:1/-1}.frame-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.frame-choice{border:1px solid var(--line);border-radius:13px;padding:10px;background:white;text-align:left;color:var(--ink)}.frame-choice.active{outline:2px solid var(--wine);border-color:var(--wine);background:#fff7f8}.frame-preview{height:54px;border-radius:7px;margin-bottom:8px;display:grid;place-items:center;font-size:11px;font-weight:900;letter-spacing:.05em;overflow:hidden}.frame-choice b{display:block;font-size:12px}.frame-choice small{font-size:10px;color:var(--muted)}
+.preview{background:#f7e9e9;border-radius:14px;padding:10px;min-height:120px;display:grid;place-items:center;overflow:hidden}.preview canvas{max-width:100%;height:auto;max-height:620px;border-radius:4px;box-shadow:0 5px 20px #35101820}.share-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.note{background:#fff7e9;border:1px solid #f1dfb9;border-radius:12px;padding:11px;font-size:12px;line-height:1.5;color:#735426}.status{font-size:12px;color:var(--muted);min-height:18px;margin-top:8px}.footer{text-align:center;font-size:11px;color:var(--muted);padding:0 15px 25px}
+@media(min-width:600px){main{grid-template-columns:1fr 1fr;align-items:start}header{padding-left:max(24px,calc((100vw - 720px)/2));padding-right:max(24px,calc((100vw - 720px)/2))}.full-width{grid-column:1/-1}.shots{grid-template-columns:repeat(2,minmax(0,1fr))}.frame-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<header><div class="kicker">Class memories • SMADA 467</div><div class="brand">SLIVORA <span>467</span></div><div class="sub">Your class, your memories. Photobooth aesthetic marun untuk foto-foto random di kelas.</div></header>
+<main>
+<section class="panel">
+ <div class="section-head"><h2>01 / Kamera</h2><span class="pill">1 klik = 1 foto</span></div>
+ <div class="camera-wrap"><video id="video" autoplay playsinline></video><div class="placeholder" id="placeholder"><b>Kamera siap bikin memori?</b><span class="small" style="color:#d7c9cc">Tekan “Aktifkan kamera” untuk mulai.</span></div></div>
+ <div class="camera-actions"><button class="primary wide" id="startCam">Aktifkan kamera</button><button class="secondary" id="flipCam" disabled>Balik kamera</button></div>
+ <div class="camera-actions"><button class="primary wide" id="takePhoto" disabled>◉ Ambil 1 foto</button><button class="outline" id="stopCam" disabled>Matikan</button></div>
+ <p class="small">Setelah mengambil foto, kamu bisa cek hasilnya. Kalau kurang bagus, tekan Ulangi di foto itu saja.</p>
+ <div class="status" id="cameraStatus" role="status"></div>
+</section>
+<section class="panel">
+ <div class="section-head"><h2>02 / Foto kamu</h2><span class="count" id="shotCount">0 / 4 foto</span></div>
+ <div class="fields" style="margin-bottom:12px"><div class="field full"><label for="photoCount">Jumlah foto untuk kolase</label><select id="photoCount"><option value="3">3 foto</option><option value="4" selected>4 foto</option></select></div></div>
+ <div class="shots" id="shots"></div>
+ <p class="small">Foto akan masuk sesuai nomor saat kamu memotretnya. Mengulang satu foto tidak menghapus foto lainnya.</p>
+</section>
+<section class="panel">
+ <div class="section-head"><h2>03 / Pilih frame</h2><span class="pill">Maroon mood</span></div>
+ <div class="frame-grid" id="frameGrid"></div>
+ <div class="fields" style="margin-top:13px">
+  <div class="field"><label for="layout">Layout kolase</label><select id="layout"><option value="grid">Grid kotak</option><option value="editorial">Editorial asimetris</option><option value="film">Film strip</option><option value="polaroid">Polaroid cards</option></select></div>
+  <div class="field"><label for="caption">Tulisan tambahan</label><select id="caption"><option value="none">Tanpa tulisan</option><option value="class">SLIVORA 467</option><option value="smada">SMADA 467</option><option value="memory">CLASS MEMORIES</option></select></div>
+ </div>
+</section>
+<section class="panel full-width">
+ <div class="section-head"><h2>04 / Preview hasil</h2><span class="pill">Bisa disimpan</span></div>
+ <div class="preview"><canvas id="resultCanvas" width="900" height="1200"></canvas></div>
+ <div class="camera-actions"><button class="primary wide" id="makeCollage">Buat / perbarui kolase</button><button class="secondary" id="download">Download foto</button></div>
+ <div class="share-actions" style="margin-top:8px"><button class="primary" id="sharePhoto">Kirim / bagikan foto</button><button class="outline" id="emailPhoto">Buka Gmail</button></div>
+ <p class="status" id="shareStatus" role="status"></p>
+ <div class="note"><b>Info pengiriman:</b> tombol “Kirim / bagikan foto” akan membuka menu berbagi HP jika didukung. Pilih Gmail di menu itu untuk membagikan gambar tanpa perlu mengunduhnya dahulu. Tombol “Buka Gmail” hanya membuka draft email; browser tidak bisa menempelkan lampiran secara otomatis ke Gmail tanpa layanan/backend tambahan.</div>
+</section>
+</main>
+<div class="footer">SLIVORA 467 · Made for classroom memories</div>
+<canvas id="captureCanvas" hidden></canvas>
+<script>
+const $=id=>document.getElementById(id);
+const video=$('video'), placeholder=$('placeholder'), shotsEl=$('shots');
+let stream=null, facing='user', selectedFrame='slivora', photos=[null,null,null,null], activeSlot=0, lastBlob=null;
+const frameData=[
+ {id:'slivora',name:'SLIVORA 467',desc:'Clean maroon',bg:'#641b2b',fg:'#fff7ef',accent:'#e7b8c1'},
+ {id:'smada',name:'SMADA 467',desc:'School edition',bg:'#f8eee7',fg:'#641b2b',accent:'#b76b7b'},
+ {id:'film',name:'Retro film',desc:'Analog memories',bg:'#21191b',fg:'#fff4df',accent:'#d9b78a'},
+ {id:'scrap',name:'Scrapbook',desc:'Cut-out collage',bg:'#f4dfe3',fg:'#4e1724',accent:'#fff9f2'},
+ {id:'minimal',name:'Minimal date',desc:'Editorial type',bg:'#fffaf5',fg:'#2b2022',accent:'#8d3046'},
+ {id:'sporty',name:'Campus club',desc:'Bold & playful',bg:'#7e263b',fg:'#fff8ef',accent:'#f0c9d1'}
+];
+function renderFrames(){ $('frameGrid').innerHTML=''; frameData.forEach(f=>{const b=document.createElement('button');b.className='frame-choice'+(selectedFrame===f.id?' active':'');b.innerHTML=`<div class="frame-preview" style="background:${f.bg};color:${f.fg};border:1px solid ${f.accent}">${f.id==='film'?'▰  ▰  ▰':f.id==='scrap'?'✦  PHOTO  ✦':f.name}</div><b>${f.name}</b><small>${f.desc}</small>`;b.onclick=()=>{selectedFrame=f.id;renderFrames();drawCollage()};$('frameGrid').appendChild(b)})}
+function renderShots(){shotsEl.innerHTML='';const n=+$('photoCount').value;for(let i=0;i<n;i++){const card=document.createElement('div');card.className='shot';const thumb=document.createElement('div');thumb.className='thumb';if(photos[i]){const im=document.createElement('img');im.src=photos[i];im.alt='Foto '+(i+1);thumb.appendChild(im)}else{const e=document.createElement('div');e.className='empty';e.textContent='Foto '+(i+1)+' belum diambil';thumb.appendChild(e)}const foot=document.createElement('div');foot.className='shot-foot';const label=document.createElement('span');label.textContent='Foto '+(i+1);const btn=document.createElement('button');btn.className=photos[i]?'secondary':'outline';btn.textContent=photos[i]?'Ulangi':'Pilih slot';btn.onclick=()=>{activeSlot=i;if(!stream)startCamera();else $('cameraStatus').textContent='Slot foto '+(i+1)+' dipilih. Tekan Ambil 1 foto.'};foot.append(label,btn);card.append(thumb,foot);shotsEl.appendChild(card)}$('shotCount').textContent=photos.slice(0,n).filter(Boolean).length+' / '+n+' foto';}
+async function startCamera(){try{if(stream)stream.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:false});video.srcObject=stream;video.style.display='block';video.classList.toggle('mirror',facing==='user');placeholder.style.display='none';$('takePhoto').disabled=false;$('flipCam').disabled=false;$('stopCam').disabled=false;$('cameraStatus').textContent='Kamera aktif. Pilih slot foto, lalu tekan Ambil 1 foto.'}catch(e){$('cameraStatus').textContent='Kamera belum bisa dibuka. Pastikan website dibuka lewat HTTPS dan izinkan akses kamera di Chrome.'}}
+function stopCamera(){if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;video.srcObject=null;video.style.display='none';placeholder.style.display='grid';$('takePhoto').disabled=true;$('flipCam').disabled=true;$('stopCam').disabled=true;$('cameraStatus').textContent='Kamera dimatikan.'}
+function takePhoto(){if(!stream||video.videoWidth===0)return;const c=$('captureCanvas');c.width=video.videoWidth;c.height=video.videoHeight;const ctx=c.getContext('2d');if(facing==='user'){ctx.translate(c.width,0);ctx.scale(-1,1)}ctx.drawImage(video,0,0,c.width,c.height);photos[activeSlot]=c.toDataURL('image/jpeg',.92);const n=+$('photoCount').value;const next=photos.findIndex((p,i)=>i<n&&!p);if(next>=0)activeSlot=next;else activeSlot=(activeSlot+1)%n;renderShots();drawCollage();$('cameraStatus').textContent='Foto tersimpan di slot. Kamu bisa ulangi foto tertentu kapan saja.'}
+function loadImage(src){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=src})}
+function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r)}
+function drawCover(ctx,img,x,y,w,h){const ir=img.width/img.height, r=w/h;let sx=0,sy=0,sw=img.width,sh=img.height;if(ir>r){sw=img.height*r;sx=(img.width-sw)/2}else{sh=img.width/r;sy=(img.height-sh)/2}ctx.drawImage(img,sx,sy,sw,sh,x,y,w,h)}
+async function drawCollage(){const canvas=$('resultCanvas'),ctx=canvas.getContext('2d'),n=+$('photoCount').value,frame=frameData.find(f=>f.id===selectedFrame)||frameData[0],layout=$('layout').value;const chosen=photos.slice(0,n);const imgs=await Promise.all(chosen.map(p=>p?loadImage(p).catch(()=>null):Promise.resolve(null)));let W=900,H=layout==='film'?Math.max(1300,n*370+250):1200;if(layout==='polaroid')H=1350;canvas.width=W;canvas.height=H;ctx.fillStyle=frame.bg;ctx.fillRect(0,0,W,H);const cap=$('caption').value;ctx.fillStyle=frame.fg;ctx.textAlign='center';ctx.font='800 35px system-ui';let top=60;let headerText=cap==='class'?'SLIVORA 467':cap==='smada'?'SMADA 467':cap==='memory'?'CLASS MEMORIES':(frame.id==='smada'?'SMADA 467':frame.id==='slivora'?'SLIVORA 467':'SMADA • SLIVORA');ctx.fillText(headerText,W/2,top);ctx.fillStyle=frame.accent;ctx.fillRect(W*.36,top+22,W*.28,4);top+=55;
+const pad=layout==='film'?130:55,gap=layout==='polaroid'?25:18,usableW=W-pad*2;
+if(layout==='film'){let y=top;for(let i=0;i<n;i++){ctx.fillStyle=frame.fg;ctx.fillRect(48,y,804,330);ctx.fillStyle=frame.bg;ctx.fillRect(65,y+15,770,300);if(imgs[i])drawCover(ctx,imgs[i],82,y+28,736,274);else{ctx.fillStyle=frame.accent;ctx.fillText('FOTO '+(i+1),W/2,y+180)}ctx.fillStyle=frame.fg;ctx.font='bold 16px monospace';ctx.fillText('SLIVORA • SMADA 467',W/2,y+319);y+=350}}
+else if(layout==='editorial'&&n===4){const boxes=[[pad,top,usableW*.56,420],[pad+usableW*.56+gap,top,usableW*.44-gap,200],[pad+usableW*.56+gap,top+220,usableW*.44-gap,200],[pad,top+440,usableW,310]];for(let i=0;i<4;i++){const [x,y,w,h]=boxes[i];ctx.fillStyle=frame.accent;ctx.fillRect(x-3,y-3,w+6,h+6);if(imgs[i])drawCover(ctx,imgs[i],x,y,w,h);else{ctx.fillStyle=frame.bg;ctx.fillRect(x,y,w,h);ctx.fillStyle=frame.fg;ctx.font='bold 18px system-ui';ctx.fillText('FOTO '+(i+1),x+w/2,y+h/2)}}}
+else {const cols=n===3?2:2,rows=n===3?2:2,cellW=(usableW-gap*(cols-1))/cols,cellH=layout==='polaroid'?380:(H-top-150-gap*(rows-1))/rows;for(let i=0;i<n;i++){let col,row;if(layout==='editorial'&&n===3){col=i===0?0:1;row=i===0?0:i-1}else{col=i%cols;row=Math.floor(i/cols)}const x=pad+col*(cellW+gap),y=top+row*(cellH+gap);if(layout==='polaroid'){ctx.fillStyle=frame.fg;ctx.fillRect(x,y,cellW,cellH);if(imgs[i])drawCover(ctx,imgs[i],x+12,y+12,cellW-24,cellH-65);ctx.fillStyle=frame.bg;ctx.font='bold 16px system-ui';ctx.fillText('SMADA 467',x+cellW/2,y+cellH-22)}else{ctx.fillStyle=frame.accent;roundRect(ctx,x-3,y-3,cellW+6,cellH+6,8);ctx.fill();if(imgs[i])drawCover(ctx,imgs[i],x,y,cellW,cellH);else{ctx.fillStyle=frame.bg;roundRect(ctx,x,y,cellW,cellH,6);ctx.fill();ctx.fillStyle=frame.fg;ctx.font='bold 20px system-ui';ctx.fillText('FOTO '+(i+1),x+cellW/2,y+cellH/2)}}}}
+ctx.fillStyle=frame.fg;ctx.globalAlpha=.85;ctx.font='600 16px system-ui';ctx.fillText('CLASS MEMORIES  •  467',W/2,H-35);ctx.globalAlpha=1;lastBlob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.94));}
+$('startCam').onclick=startCamera;$('stopCam').onclick=stopCamera;$('takePhoto').onclick=takePhoto;$('flipCam').onclick=()=>{facing=facing==='user'?'environment':'user';if(stream)startCamera()};$('photoCount').onchange=()=>{activeSlot=0;renderShots();drawCollage()};$('layout').onchange=drawCollage;$('caption').onchange=drawCollage;$('makeCollage').onclick=async()=>{await drawCollage();$('shareStatus').textContent='Kolase diperbarui.'};$('download').onclick=async()=>{await drawCollage();if(!lastBlob)return;const a=document.createElement('a');a.href=URL.createObjectURL(lastBlob);a.download='SLIVORA-467-photobooth.jpg';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);$('shareStatus').textContent='Kolase diunduh.'};
+$('sharePhoto').onclick=async()=>{await drawCollage();if(!lastBlob)return;const file=new File([lastBlob],'SLIVORA-467-photobooth.jpg',{type:'image/jpeg'});try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'SLIVORA 467 Photobooth',text:'Class memories • SMADA 467'});$('shareStatus').textContent='Pilih Gmail atau aplikasi lain dari menu berbagi HP.'}else{$('shareStatus').textContent='Berbagi lampiran tidak didukung browser ini. Coba buka lewat Chrome terbaru atau gunakan Download foto.'}}catch(e){if(e.name!=='AbortError')$('shareStatus').textContent='Menu berbagi tidak tersedia. Kamu bisa mencoba Download foto.'}};
+$('emailPhoto').onclick=()=>{const email=prompt('Masukkan alamat Gmail penerima:');if(email===null)return;if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert('Alamat email belum valid.');return}const subject=encodeURIComponent('Foto SLIVORA 467 Photobooth');const body=encodeURIComponent('Hai! Ini foto kenangan kelas SLIVORA 467 / SMADA 467. Untuk melampirkan gambar, gunakan tombol “Kirim / bagikan foto” lalu pilih Gmail, karena draft email biasa tidak dapat menambahkan lampiran otomatis.');location.href=`mailto:${encodeURIComponent(email)}?subject=${subject}&body=${body}`};
+renderFrames();renderShots();drawCollage();
+</script>
+</body>
+</html>
